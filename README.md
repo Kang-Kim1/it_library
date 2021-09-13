@@ -1,2 +1,2 @@
 # it_library
-Development assignment using REST API
+Mobile application(Android) development assignment using REST API
