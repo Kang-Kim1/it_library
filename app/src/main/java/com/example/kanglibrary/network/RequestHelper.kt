@@ -6,6 +6,8 @@ import com.example.kanglibrary.model.BookSearchResult
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
+import kotlin.concurrent.thread
 
 
 /**
@@ -15,46 +17,43 @@ import retrofit2.Response
  * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
  */
 class RequestHelper {
+
     var resultList = ArrayList<Book>()
-    var isDone : Boolean = false;
-    val retrofit = RetrofitClient.getInstance()
-    val api = retrofit.create(RetrofitService::class.java)
 
-    fun  getAllBooks(query : String, page : Int) {
-        val call = api.getAllBooks(query ,page)
-        Log.d(this.javaClass.name,"getAllBooks")
-        call.enqueue(object : Callback<BookSearchResult> {
-            override fun onResponse(
-                    call: Call<BookSearchResult>,
-                    response: Response<BookSearchResult>
-            ) {
-                Log.d(this.javaClass.name, "getAllBooks > onResponse >  ${response}")
-                Log.d(this.javaClass.name, "getAllBooks > onResponse >  ${response.body()}")
+    var bookCount = 0
 
-                val total = response.body()?.total!!.toInt()
-                val books = response.body()?.books as ArrayList<Book>
+    fun  getAllBooks(query : String, page : Int, size : Int) {
+       val retrofit = RetrofitClient.getInstance()
+       val api = retrofit.create(RetrofitService::class.java)
+       val call = api.getAllBooks(query, page)
 
-                Log.d(this.javaClass.name, "getAllBooks > onResponse > List Count :  ${books.size} / ${page}")
-                resultList.addAll(books)
+       val response = call.execute()
+       if (response.isSuccessful) {
+           Log.d(this.javaClass.name, "getAllBooks > onSuccess")
 
-                if(total / 10 > page) {
-                    getAllBooks(query,  page + 1)
-                } else {
-                    Log.d(this.javaClass.name, "getAllBooks > onResponse > Preparing details from now...")
-                    isDone = true
-                    return
-                }
-            }
+           Log.d(this.javaClass.name, "getAllBookDetails > onResponse > ${response}")
 
-            override fun onFailure(call: Call<BookSearchResult>, t: Throwable) {
-                Log.d(this.javaClass.name, "getAllBooks > onFailure > message : ${t.message}")
+           if (page == 1) {
+               bookCount = response.body()?.total!!.toInt()
+               Log.d("BOOKCOUNT : ", "${bookCount}")
+           }
 
-            }
-        })
+           // If there are more books left to get
+           resultList.addAll(response.body()?.books as List<Book>)
+
+       } else {
+           Log.d(this.javaClass.name, "getAllBookDetails > onFailure > ${response}")
+       }
+    }
+
+    fun getSize() : Int{
+        return bookCount
     }
 
     fun getBookDetail(book : Book) : Book {
         lateinit var bookDetail : Book
+        val retrofit = RetrofitClient.getInstance()
+        val api = retrofit.create(RetrofitService::class.java)
         val call = api.getBookDetail(book.isbn13!!)
         call.enqueue(object : Callback<Book> {
             override fun onResponse(

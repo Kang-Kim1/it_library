@@ -18,8 +18,14 @@ import com.example.kanglibrary.R
 import com.example.kanglibrary.databinding.ActivityBookListBinding
 import com.example.kanglibrary.databinding.ActivitySplashBinding
 import com.example.kanglibrary.model.Book
+import com.example.kanglibrary.model.BookSearchResult
+import com.example.kanglibrary.network.RetrofitClient
+import com.example.kanglibrary.network.RetrofitService
 import com.example.kanglibrary.view.adapter.BookAdapter
 import com.example.kanglibrary.viewmodel.BookListViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 /**
  * @file BookListActivity.kt
@@ -29,16 +35,20 @@ import com.example.kanglibrary.viewmodel.BookListViewModel
  */
 class BookListActivity : AppCompatActivity() {
     lateinit var binding : ActivityBookListBinding
+    lateinit var resultList : ArrayList<Book>
     var liveBookList = MutableLiveData<List<Book>>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_splash)
         Log.d(this.javaClass.name,"OnCreate")
 
-//        val bundle = intent.extras
-//        liveBookList.value = bundle!!.getString("BOOK_LIST") as ArrayList<Book>
-        liveBookList.value = intent.getSerializableExtra("BOOK_LIST") as ArrayList<Book>
+        resultList = ArrayList<Book>()
+
+        val query = "mongodb"
+        var page = 1
+        getAllBooks(query, page)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_book_list)
         binding.lifecycleOwner = this
@@ -50,21 +60,80 @@ class BookListActivity : AppCompatActivity() {
         val observer : Observer<List<Book>> =
             Observer { data ->
                 liveBookList.value = data
-
-                binding.rvBookList.adapter = BookAdapter(liveBookList)
         }
 
         viewModel.liveData.observe(this, observer)
-        binding.rvBookList.adapter = BookAdapter(liveBookList)
+//        binding.rvBookList.adapter = BookAdapter(liveBookList)
     }
-    private fun setRecyclerView() {
-        //binding.rvBookList
+    fun getAllBooks(query : String, page : Int) {
+        val retrofit = RetrofitClient.getInstance()
+        val api = retrofit.create(RetrofitService::class.java)
+        val call = api.getAllBooks(query, page)
 
+        Log.d(this.javaClass.name,"getAllBooks")
+        call.enqueue(object : Callback<BookSearchResult> {
+            override fun onResponse(
+                call: Call<BookSearchResult>,
+                response: Response<BookSearchResult>
+            ) {
+                Log.d(this.javaClass.name, "getAllBooks > onResponse >  ${response}")
+                Log.d(this.javaClass.name, "getAllBooks > onResponse >  ${response.body()}")
+
+                val total = response.body()?.total!!.toInt()
+                val books = response.body()?.books as ArrayList<Book>
+
+                Log.d(this.javaClass.name, "getAllBooks > onResponse > List Count :  ${books.size} / ${page}")
+                resultList.addAll(books)
+
+
+                for(i in 0 until books.size) {
+                    books[i].isbn13?.let { getBookDetail(it, (page - 1) * 10  + i) }
+                }
+
+                if(total / 10 > page) {
+                    updateRecyclerView()
+                    getAllBooks(query, page + 1)
+                }
+            }
+
+            override fun onFailure(call: Call<BookSearchResult>, t: Throwable) {
+                Log.d(this.javaClass.name, "getAllBooks > onFailure > message : ${t.message}")
+
+            }
+        })
     }
 
-    private fun updateList() {
+    fun getBookDetail(isbn : String, index : Int) {
+        val retrofit = RetrofitClient.getInstance()
+        val api = retrofit.create(RetrofitService::class.java)
+        val call = api.getBookDetail(isbn)
 
+        Log.d(this.javaClass.name,"getBookDetail")
+        call.enqueue(object : Callback<Book> {
+            override fun onResponse(
+                call: Call<Book>,
+                response: Response<Book>
+            ) {
+                Log.d(this.javaClass.name, "getBookDetail > onResponse >  ${response.body()}")
+                val bookDetail = response.body() as Book
+                resultList[index] = bookDetail
+                updateRecyclerView()
+            }
+
+            override fun onFailure(call: Call<Book>, t: Throwable) {
+                Log.d(this.javaClass.name, "getBookDetail > onFailure > message : ${t.message}")
+
+            }
+        })
     }
 
+    private fun updateRecyclerView() {
+        liveBookList.value = resultList
+        if(binding.rvBookList.adapter != null) {
+            binding?.rvBookList?.adapter!!.notifyItemInserted(resultList.size - 1)
+        } else {
+            binding.rvBookList.adapter = BookAdapter(liveBookList)
+        }
+    }
 
 }
