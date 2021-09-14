@@ -26,6 +26,7 @@ import com.example.kanglibrary.viewmodel.BookListViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.concurrent.thread
 
 /**
  * @file BookListActivity.kt
@@ -57,12 +58,12 @@ class BookListActivity : AppCompatActivity() {
 
         binding.rvBookList.layoutManager = LinearLayoutManager(this)
 
-        val observer : Observer<List<Book>> =
-            Observer { data ->
-                liveBookList.value = data
-        }
-
-        viewModel.liveData.observe(this, observer)
+//        val observer : Observer<List<Book>> =
+//            Observer { data ->
+//                liveBookList.value = data
+//        }
+//
+//        viewModel.liveData.observe(this, observer)
 //        binding.rvBookList.adapter = BookAdapter(liveBookList)
     }
     fun getAllBooks(query : String, page : Int) {
@@ -81,17 +82,16 @@ class BookListActivity : AppCompatActivity() {
 
                 val total = response.body()?.total!!.toInt()
                 val books = response.body()?.books as ArrayList<Book>
-
-                Log.d(this.javaClass.name, "getAllBooks > onResponse > List Count :  ${books.size} / ${page}")
                 resultList.addAll(books)
 
+                Log.d(this.javaClass.name, "getAllBooks > onResponse > List Count :  ${books.size} / ${page}")
 
                 for(i in 0 until books.size) {
-                    books[i].isbn13?.let { getBookDetail(it, (page - 1) * 10  + i) }
+                    getBookDetail(books[i].isbn13!!, (page - 1) * 10 + i)
+
                 }
 
                 if(total / 10 > page) {
-                    updateRecyclerView()
                     getAllBooks(query, page + 1)
                 }
             }
@@ -103,7 +103,7 @@ class BookListActivity : AppCompatActivity() {
         })
     }
 
-    fun getBookDetail(isbn : String, index : Int) {
+    fun getBookDetail(isbn : String, index : Int){
         val retrofit = RetrofitClient.getInstance()
         val api = retrofit.create(RetrofitService::class.java)
         val call = api.getBookDetail(isbn)
@@ -116,7 +116,17 @@ class BookListActivity : AppCompatActivity() {
             ) {
                 Log.d(this.javaClass.name, "getBookDetail > onResponse >  ${response.body()}")
                 val bookDetail = response.body() as Book
+
+                // String to be displayed for author @ recycler view
+                val authors = bookDetail.authors?.split(", ")
+                if(authors!!.size > 1) {
+                    bookDetail.authorsForItemLabel = "${authors[0]} and ${authors!!.size - 1} others"
+                } else {
+                    bookDetail.authorsForItemLabel = "${bookDetail.authors}"
+                }
+
                 resultList[index] = bookDetail
+
                 updateRecyclerView()
             }
 
@@ -130,7 +140,9 @@ class BookListActivity : AppCompatActivity() {
     private fun updateRecyclerView() {
         liveBookList.value = resultList
         if(binding.rvBookList.adapter != null) {
-            binding?.rvBookList?.adapter!!.notifyItemInserted(resultList.size - 1)
+            val adapter = binding.rvBookList.adapter
+            //adapter?.notifyItemInserted(resultList.size - 1)
+            adapter?.notifyDataSetChanged()
         } else {
             binding.rvBookList.adapter = BookAdapter(liveBookList)
         }

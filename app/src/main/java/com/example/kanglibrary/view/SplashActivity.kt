@@ -37,42 +37,7 @@ class SplashActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         Log.d("APP STARTED", "JUST PASSED")
     }
-
-
-//    fun  getAllBooks(query : String, page : Int) {
-//        val call = api.getAllBooks(query ,page)
-//        Log.d(this.javaClass.name,"getAllBooks")
-//        call.enqueue(object : Callback<BookSearchResult> {
-//            override fun onResponse(
-//                    call: Call<BookSearchResult>,
-//                    response: Response<BookSearchResult>
-//            ) {
-//                Log.d(this.javaClass.name, "getAllBooks > onResponse >  ${response}")
-//                Log.d(this.javaClass.name, "getAllBooks > onResponse >  ${response.body()}")
-//
-//                val total = response.body()?.total!!.toInt()
-//                val books = response.body()?.books as ArrayList<Book>
-//
-//                Log.d(this.javaClass.name, "getAllBooks > onResponse > List Count :  ${books.size} / ${page}")
-//                resultList.addAll(books)
-//
-//                if(total / 10 > page) {
-//                    getAllBooks(query,  page + 1)
-//                } else {
-//                    Log.d(this.javaClass.name, "getAllBooks > onResponse > Preparing details from now...")
-//                    isDone = true
-//                    return
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<BookSearchResult>, t: Throwable) {
-//                Log.d(this.javaClass.name, "getAllBooks > onFailure > message : ${t.message}")
-//
-//            }
-//        })
-//    }
-
-
+    
 
     override fun onStart() {
         super.onStart()

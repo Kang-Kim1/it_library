@@ -29,6 +29,7 @@ data class Book(
         val price: String?,
         val image: String?,
         val url: String?,
+        var authorsForItemLabel: String?,
         val pdf: @RawValue PDF?
 ) : Parcelable
 
