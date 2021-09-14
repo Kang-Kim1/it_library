@@ -18,12 +18,13 @@ import com.example.kanglibrary.view.BookListActivity
 class BookDetailRequestAsyncTask(val progressBar : ProgressBar, val book : Book, val parentActivity : AppCompatActivity) : AsyncTask<Void, Integer, Book>() {
 
     override fun doInBackground(vararg p0: Void?): Book {
-        val requestHelper = RequestHelper()
-        val bookDetail = requestHelper.getBookDetail(book)
+//        val requestHelper = RequestHelper()
+//        val bookDetail = requestHelper.getBookDetail(book)
 
-        // Wait until all the books are retrieved
-        while(!requestHelper.isDone) { /*Loading*/ }
-        return bookDetail
+//        // Wait until all the books are retrieved
+//        while(!RequestHelper.isDone) { /*Loading*/ }
+//        return RequestHelper.getBookDetail(book)
+        return book
     }
 
     override fun onPreExecute() {
