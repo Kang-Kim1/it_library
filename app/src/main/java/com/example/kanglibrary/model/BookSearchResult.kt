@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
+import java.io.Serializable
 
 data class BookSearchResult (
         val error: String?,
@@ -12,7 +13,6 @@ data class BookSearchResult (
         val books: List<Book>?
 )
 
-@Parcelize
 data class Book(
         val error: String?,
         val title: String?,
@@ -29,10 +29,10 @@ data class Book(
         val price: String?,
         val image: String?,
         val url: String?,
+        var authorsForItemLabel: String?,
         val pdf: @RawValue PDF?
-) : Parcelable
+) : Serializable
 
-@Parcelize
 data class PDF (
         @SerializedName("Chapter 1")
         val chapter1: String?,
@@ -60,4 +60,4 @@ data class PDF (
         val chapter12: String?,
         @SerializedName("Chapter 13")
         val chapter13: String?
-) : Parcelable
+) : Serializable
