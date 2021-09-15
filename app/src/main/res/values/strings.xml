@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">KangLibrary</string>
+    <string name="url_book_detail"><a href="@{book.url}">@{book.title + `(` + book.year +`)` }</a></string>
 </resources>

@@ -10,17 +10,6 @@ import androidx.databinding.DataBindingUtil
 import com.example.kanglibrary.R
 import com.example.kanglibrary.databinding.ActivitySplashBinding
 import com.example.kanglibrary.model.Book
-import com.example.kanglibrary.model.BookSearchResult
-import com.example.kanglibrary.network.BookListRequestAsyncTask
-import com.example.kanglibrary.network.RequestHelper
-import com.example.kanglibrary.network.RetrofitClient
-import com.example.kanglibrary.network.RetrofitService
-import kotlinx.android.synthetic.main.activity_splash.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.Exception
-import kotlin.concurrent.thread
 
 class SplashActivity : AppCompatActivity() {
     lateinit var results : List<Book>
@@ -41,7 +30,6 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
         progressBar.visibility = View.INVISIBLE
 
         val intent = Intent(this, BookListActivity::class.java)

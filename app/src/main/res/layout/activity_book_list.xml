@@ -10,18 +10,36 @@
         android:layout_margin="15dp"
         android:weightSum="10"
         tools:context=".view.BookListActivity">
-        <EditText
+
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/et_search_keyword"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-        </EditText>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_book_list"
-            android:layout_height="0dp"
-            android:layout_weight="9"
+        </androidx.appcompat.widget.AppCompatEditText>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clo_outer"
             android:layout_width="match_parent"
-            android:layout_gravity="center"
-        />
+            android:layout_weight="9"
+            android:layout_height="0dp">
+
+            <ProgressBar
+                android:id="@+id/pg_list_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/clo_outer"
+                app:layout_constraintEnd_toEndOf="@+id/clo_outer"
+                app:layout_constraintStart_toStartOf="@+id/clo_outer"
+                app:layout_constraintTop_toTopOf="@id/clo_outer" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_book_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
+
 </layout>
