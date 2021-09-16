@@ -30,7 +30,6 @@ import retrofit2.Response
  */
 class BookListActivity : AppCompatActivity() {
     lateinit var binding : ActivityBookListBinding
-    lateinit var resultList : ArrayList<Book>
     lateinit var liveBookList : MutableLiveData<ArrayList<Book>>
     lateinit var progressBar : ProgressBar
 
@@ -55,12 +54,14 @@ class BookListActivity : AppCompatActivity() {
         binding.rvBookList.layoutManager = LinearLayoutManager(this)
 
         // Set observer for LiveData  => REVIEW REQUIRED
-        //        val listObserver = Observer<ArrayList<Book>> {
-        //            val adapter = binding.rvBookList.adapter
-        //            adapter?.notifyDataSetChanged()
-        //            Log.d("OBSERVER ", "DATA UPDATED !!!!!")
-        //        }
-        //        viewModel.liveListData.observe(this, listObserver)
+        val listObserver = Observer<ArrayList<Book>> {
+//            val adapter = binding.rvBookList.adapter
+//            adapter?.notifyDataSetChanged()
+//            Log.d("OBSERVER ", "DATA UPDATED !!!!!")
+//            updateRecyclerView()
+
+        }
+        viewModel.liveListData.observe(this, listObserver)
 
     }
     fun getAllBooks(query : String, page : Int) {
@@ -130,6 +131,11 @@ class BookListActivity : AppCompatActivity() {
 
             }
         })
+    }
+
+
+    override fun onBackPressed() {
+        /* Disable 'Back' Button */
     }
 
     private fun updateRecyclerView() {
