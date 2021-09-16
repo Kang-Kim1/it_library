@@ -11,9 +11,10 @@ import com.example.kanglibrary.model.Book
  * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
  */
 class BookListViewModel : ViewModel() {
-    val liveListData : MutableLiveData<ArrayList<Book>> = MutableLiveData<ArrayList<Book>>()
+    var liveListData : MutableLiveData<ArrayList<Book>>
 
     init {
+        liveListData =  MutableLiveData<ArrayList<Book>>()
         liveListData.value = ArrayList<Book>()
     }
 
