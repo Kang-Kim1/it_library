@@ -1,6 +1,7 @@
 package com.example.kanglibrary.view.adapter
 
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -40,20 +41,18 @@ class BookAdapter(var bookList : LiveData<ArrayList<Book>>) : RecyclerView.Adapt
 
     override fun onBindViewHolder(holder: BookAdapter.ViewHolder, position: Int) {
         val book = bookList.value!![position]
-        if(book.pdf != null)
-            Log.d("PARSE Possible ?", book.pdf.toString())
 
+        //Log.d(javaClass.name, "onBindViewHolder > ADDED book's ISBN : ${book.isbn13}")
         holder.bind(book)
-        progressBar.visibility = View.INVISIBLE
+        progressBar.visibility = View.GONE
+        holder.setIsRecyclable(false)
     }
     /*
         inner class for Item Holder
      */
     inner class ViewHolder(private val binding : ItemBookBinding) : RecyclerView.ViewHolder(binding.root) {
-
         fun bind(bookDetail : Book) {
             binding.book = bookDetail
-            binding.book
             binding.executePendingBindings() // Prompt binding when any update is detected
 
             this.itemView.setOnClickListener(View.OnClickListener {

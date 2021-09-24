@@ -3,34 +3,74 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="totalCount"
+            type="Integer">
+        </variable>
+    </data>
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_margin="15dp"
-        android:weightSum="10"
+        android:orientation="vertical"
+        android:weightSum="12"
         tools:context=".view.BookListActivity">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/et_search_keyword"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
-        </androidx.appcompat.widget.AppCompatEditText>
+            android:layout_weight="1"
+            android:weightSum="7">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_search_keyword"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:maxLines="1"
+                android:inputType="text"
+                android:layout_weight="5"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:backgroundTint="#D0DCE1"
+                android:gravity="center"
+                android:text="SEARCH"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <TextView
+            android:id="@+id/tv_total_books"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{`Total `+ String.valueOf(totalCount) + ` books`}"
+            android:textStyle="bold"
+            android:gravity="right"
+            android:textSize="10sp"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clo_outer"
             android:layout_width="match_parent"
-            android:layout_weight="9"
-            android:layout_height="0dp">
+            android:layout_height="0dp"
+            android:layout_weight="11">
 
             <ProgressBar
                 android:id="@+id/pg_list_loading"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/clo_outer"
                 app:layout_constraintEnd_toEndOf="@+id/clo_outer"
                 app:layout_constraintStart_toStartOf="@+id/clo_outer"
-                app:layout_constraintTop_toTopOf="@id/clo_outer" />
+                app:layout_constraintTop_toTopOf="@id/clo_outer"
+                />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_book_list"
                 android:layout_width="match_parent"

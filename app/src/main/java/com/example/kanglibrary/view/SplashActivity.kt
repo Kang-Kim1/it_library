@@ -39,7 +39,9 @@ class SplashActivity : AppCompatActivity() {
         progressBar.visibility = View.INVISIBLE
 
         Handler().postDelayed({
-        }, 5000)
+
+        }, 1000000)
+
         val intent = Intent(this, BookListActivity::class.java)
         startActivity(intent)
     }

@@ -17,45 +17,22 @@
         android:orientation="vertical"
         android:weightSum="10">
 
-        <androidx.drawerlayout.widget.DrawerLayout
-            android:id="@+id/llo_nav"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            tools:openDrawer="start">
-
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                >
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/tb_book_detail"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@{book.title}" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_below="@id/tb_book_detail"
-                        android:background="@color/black" />
-                </androidx.appcompat.widget.Toolbar>
+                    android:layout_height="match_parent"
+                    app:menu="@menu/menu_toolbar"
+                />
 
             </RelativeLayout>
 
-            <com.google.android.material.navigation.NavigationView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/teal_200"
-                android:fitsSystemWindows="true" />
 
-
-        </androidx.drawerlayout.widget.DrawerLayout>
 
         <!-- Outer LinearLayout -->
         <androidx.appcompat.widget.LinearLayoutCompat

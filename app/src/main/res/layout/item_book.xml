@@ -10,62 +10,28 @@
             type = "com.example.kanglibrary.model.Book"/>
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/llo_outer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp"
+        android:layout_margin="5dp"
+        android:background="@color/white"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/llo_outer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="vertical"
-            android:weightSum="6"
-            tools:ignore="MissingConstraints">
+            android:background="?android:attr/selectableItemBackground"
+            >
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_title"
-                android:text="@{book.title}"
-                android:textSize="18dp"
-                android:textStyle="bold"
-                android:minLines="2"
-                android:maxLines="2"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                />
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_weight="5"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:orientation="horizontal"
-                android:weightSum="6"
-                >
-
-
-<!--                <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                    android:id="@+id/clo_iv_container"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_weight="2">-->
-<!--                    <ProgressBar-->
-<!--                        android:id="@+id/pb_loading_img"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_margin="20dp"-->
-<!--                        android:visibility="invisible"-->
-<!--                        app:layout_constraintBottom_toBottomOf="@+id/clo_iv_container"-->
-<!--                        app:layout_constraintEnd_toEndOf="@+id/clo_iv_container"-->
-<!--                        app:layout_constraintStart_toStartOf="@+id/clo_iv_container"-->
-<!--                        app:layout_constraintTop_toTopOf="@id/clo_iv_container"/>-->
-<!--                    <androidx.appcompat.widget.AppCompatImageViewImageView-->
-<!--                        android:id="@+id/iv_thumbnail"-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_weight="2"-->
-<!--                        app:imageUrl="@{book.image}"-->
-<!--                        />-->
-<!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
+                android:weightSum="5"
+                tools:ignore="MissingConstraints">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_thumbnail"
@@ -75,19 +41,33 @@
                     app:imageUrl="@{book.image}"
                     />
 
+
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_weight="4"
+                    android:layout_weight="3"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     >
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:maxLines="2"
+                        android:text="@{book.title}"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"
+                        android:ellipsize="end"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_author"
                         android:text="@{book.authorsForItemLabel}"
-                        android:layout_weight="1"
+                        android:maxLines="2"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"/>
+                        android:layout_height="wrap_content"/>
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_publisher"
                         android:text="@{book.publisher}"
@@ -96,9 +76,10 @@
                         android:layout_height="0dp"/>
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_memo"
-                        android:text="memo"
+                        android:text="@{book.memo.length() > 0 ? `HAS MEMO` : `No Memo`}"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
+                        android:textColor="@{book.memo.length() > 0 ? @color/teal_200 : @android:color/tab_indicator_text}"
                         android:layout_height="0dp"/>
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_etc"
@@ -109,16 +90,15 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
+            <ProgressBar
+                android:id="@+id/pg_detail_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/llo_outer"
+                app:layout_constraintEnd_toEndOf="@+id/llo_outer"
+                app:layout_constraintStart_toStartOf="@+id/llo_outer"
+                app:layout_constraintTop_toTopOf="@id/llo_outer" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-        <ProgressBar
-            android:id="@+id/pg_detail_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@+id/llo_outer"
-            app:layout_constraintEnd_toEndOf="@+id/llo_outer"
-            app:layout_constraintStart_toStartOf="@+id/llo_outer"
-            app:layout_constraintTop_toTopOf="@id/llo_outer" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </layout>
