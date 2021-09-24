@@ -3,20 +3,18 @@ package com.example.kanglibrary.view
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kanglibrary.R
 import com.example.kanglibrary.databinding.ActivityBookListBinding
-import com.example.kanglibrary.databinding.ItemBookBinding
 import com.example.kanglibrary.view.adapter.BookAdapter
 import com.example.kanglibrary.viewmodel.BookListViewModel
 
@@ -31,13 +29,18 @@ class BookListActivity : AppCompatActivity() {
     private lateinit var binding : ActivityBookListBinding
     private lateinit var progressBar : ProgressBar
     private lateinit var searchET : TextView
-    private val viewModel : BookListViewModel by viewModels()
+    private lateinit var viewModel : BookListViewModel
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(this.javaClass.name, "OnCreate")
 
 //        viewModel = ViewModelProviders.of(this).get(BookListViewModel::class.java)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
+        viewModel = ViewModelProvider(this).get(BookListViewModel::class.java)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_book_list)
 
@@ -100,5 +103,13 @@ class BookListActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         /* Disable 'Back' Button */
+        val count = supportFragmentManager.backStackEntryCount
+
+        if (count == 0) {
+            //additional code
+        } else {
+            supportFragmentManager.popBackStack()
+        }
+
     }
 }

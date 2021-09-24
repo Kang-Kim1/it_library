@@ -1,7 +1,7 @@
 package com.example.kanglibrary.view.adapter
 
 import android.content.Intent
-import android.graphics.Color
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.kanglibrary.R
 import com.example.kanglibrary.databinding.ItemBookBinding
 import com.example.kanglibrary.model.Book
-import com.example.kanglibrary.view.BookDetailActivity
-import kotlinx.android.synthetic.main.item_book.view.*
+import com.example.kanglibrary.view.BookDetailFragment
+import com.example.kanglibrary.view.BookListActivity
+import com.example.kanglibrary.view.MemoAddDialog
+import com.example.kanglibrary.view.MemoEditDialog
 
 /**
  * @file BookAdapter.kt
@@ -47,7 +49,7 @@ class BookAdapter(var bookList : LiveData<ArrayList<Book>>) : RecyclerView.Adapt
         progressBar.visibility = View.GONE
         holder.setIsRecyclable(false)
     }
-    /*
+     /*
         inner class for Item Holder
      */
     inner class ViewHolder(private val binding : ItemBookBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -56,13 +58,14 @@ class BookAdapter(var bookList : LiveData<ArrayList<Book>>) : RecyclerView.Adapt
             binding.executePendingBindings() // Prompt binding when any update is detected
 
             this.itemView.setOnClickListener(View.OnClickListener {
-                val intent = Intent(it.context.applicationContext, BookDetailActivity::class.java)
-                intent.putExtra("SELECTED_BOOK", bookDetail)
-                Log.d(javaClass.name, "bind > Intent starts BookDetailActivity")
-                it.context.startActivity(intent)
+                val bookData = Bundle()
+                bookData.putSerializable("SELECTED_BOOK", bookDetail)
+                val fragment = BookDetailFragment()
+                fragment.arguments = bookData
+
+                val transaction = (it.context as BookListActivity).supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.fragment_detail, fragment).addToBackStack(null).commit()
             })
         }
-
-
     }
 }

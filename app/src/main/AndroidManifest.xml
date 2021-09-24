@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.BookListActivity"/>
-        <activity android:name=".view.BookDetailActivity"/>
+        <activity android:name=".view.BookDetailFragment"/>
     </application>
 
 

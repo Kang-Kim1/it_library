@@ -14,7 +14,7 @@ object MemoManager {
 
 
 
-    fun updateFile(json : String, context : Context) {
+    private fun updateFile(json : String, context : Context) {
         // Write data into a file
         Log.d(javaClass.name, "updateFile > ${json.toString()}")
         val file = File(context.filesDir, FILE_NAME)
