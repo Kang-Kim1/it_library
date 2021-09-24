@@ -14,6 +14,7 @@ data class BookSearchResult (
 )
 
 data class Book(
+        var index: Int?,
         val error: String?,
         val title: String?,
         val subtitle: String?,
@@ -29,6 +30,7 @@ data class Book(
         val price: String?,
         val image: String?,
         val url: String?,
+        var memo: String?,
         var authorsForItemLabel: String?,
         val pdf: @RawValue PDF?
 ) : Serializable
