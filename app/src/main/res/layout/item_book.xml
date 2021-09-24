@@ -14,16 +14,16 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="5dp"
         android:layout_margin="5dp"
         android:background="@color/white"
-        >
+        android:backgroundTint="#FBFAF1"
+        app:cardCornerRadius="5dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/llo_outer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            >
+            android:background="?android:attr/selectableItemBackground">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -36,60 +36,60 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_thumbnail"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
                     android:layout_weight="2"
-                    app:imageUrl="@{book.image}"
-                    />
-
-
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"
+                    app:imageUrl="@{book.image}" />
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_weight="3"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    >
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="3"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_title"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight="2"
+                        android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@{book.title}"
                         android:textColor="@color/black"
                         android:textSize="15dp"
-                        android:ellipsize="end"
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_author"
-                        android:text="@{book.authorsForItemLabel}"
-                        android:maxLines="2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@{book.authorsForItemLabel}" />
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_publisher"
-                        android:text="@{book.publisher}"
-                        android:layout_weight="1"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"/>
+                        android:layout_height="wrap_content"
+                        android:text="@{book.publisher}" />
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_memo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:text="@{book.memo.length() > 0 ? `HAS MEMO` : `No Memo`}"
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:textColor="@{book.memo.length() > 0 ? @color/teal_200 : @android:color/tab_indicator_text}"
-                        android:layout_height="0dp"/>
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_etc"
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"/>
+                        android:textColor="@{book.memo.length() > 0 ? @color/orange : @android:color/tab_indicator_text}"
+                        />
+
+
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
+
             <ProgressBar
                 android:id="@+id/pg_detail_loading"
                 android:layout_width="wrap_content"

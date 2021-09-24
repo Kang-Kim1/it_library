@@ -20,12 +20,12 @@ import retrofit2.Response
  * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
  */
 class BookListViewModel(application : Application) : AndroidViewModel(application) {
-    val liveBookData : MutableLiveData<ArrayList<Book>>
-    val liveBooksCount : MutableLiveData<Int>
-    val liveErrorTxt : MutableLiveData<String>
-    val liveMemoData : MutableLiveData<Map<String,String>>
+    lateinit var liveBookData : MutableLiveData<ArrayList<Book>>
+    lateinit var liveBooksCount : MutableLiveData<Int>
+    lateinit var liveErrorTxt : MutableLiveData<String>
+    lateinit var liveMemoData : MutableLiveData<Map<String,String>>
 
-    private var bookList : ArrayList<Book>
+    private lateinit var bookList : ArrayList<Book>
 
     private val retrofit = RetrofitClient.getInstance()
     private val api = retrofit.create(RetrofitService::class.java)
@@ -34,7 +34,15 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
     private lateinit var callAllList : Call<BookSearchResult>
     private lateinit var callBookDetail : Call<Book>
 
+    private val context = getApplication<Application>().applicationContext
+
     init {
+        if(!::bookList.isInitialized) {
+            initViewModel()
+        }
+    }
+
+    private fun initViewModel() {
         Log.d(javaClass.name, "init begin")
         liveBookData =  MutableLiveData<ArrayList<Book>>()
         liveErrorTxt = MutableLiveData<String>()
@@ -49,25 +57,12 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
     }
 
     fun search(query : String) {
-        memoData = MemoManager.readMemo(getApplication<Application>().applicationContext)
+        memoData = MemoManager.readMemo(context)
         callAllList.cancel()
         callBookDetail.cancel()
         while(!(callAllList.isCanceled && callBookDetail.isCanceled)) {Log.d("WAITING", "WAITING")}
         liveBookData.value?.clear()
         getAllBooks(query, 1)
-    }
-
-    fun addMemo(book : Book, memo : String) {
-        Log.d(javaClass.name, "addMemo > ${memo} for ${book.isbn13}")
-        MemoManager.writeMemo(book?.isbn13.toString(), memo, getApplication<Application>().applicationContext)
-        memoData = MemoManager.readMemo(getApplication<Application>().applicationContext)
-        liveMemoData.postValue(memoData)
-
-        val index = book?.index as Int
-        //while(index > bookList.size) { /* Wait until bookList is updated */ }
-        bookList[index].memo = memo
-        //liveBookData.postValue(bookList)
-        liveBookData.setValue(bookList)
     }
 
     fun getAllBooks(query : String, page : Int) {
@@ -118,10 +113,32 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
             }
         })
     }
+    private fun updateLiveMemoData(book : Book, memo : String) {
+        memoData = MemoManager.readMemo(context)
+        liveMemoData.postValue(memoData)
 
+        val index = book?.index as Int
+        bookList[index].memo = memo
+        liveBookData.setValue(bookList)
+    }
+
+    fun addMemo(book : Book, memo : String) {
+        Log.d(javaClass.name, "addMemo > ${memo} for ${book.isbn13}")
+        MemoManager.writeMemo(book?.isbn13.toString(), memo, context)
+        updateLiveMemoData(book, memo)
+
+    }
 
     fun deleteMemo(book : Book) {
-        MemoManager.deleteMemo(book?.isbn13.toString(), getApplication<Application>().applicationContext)
+        Log.d(javaClass.name, "delete > ${book.isbn13}")
+        MemoManager.deleteMemo(book?.isbn13.toString(), context)
+        updateLiveMemoData(book, "")
+    }
+
+    fun editMemo(book : Book, memo : String) {
+        Log.d(javaClass.name, "editMemo > ${memo} for ${book.isbn13}")
+        MemoManager.writeMemo(book?.isbn13.toString(), memo, context)
+        updateLiveMemoData(book, memo)
     }
 
     fun getBookDetail(isbn : String, index : Int){
@@ -174,3 +191,4 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
         })
     }
 }
+

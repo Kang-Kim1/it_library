@@ -5,21 +5,13 @@ import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.example.kanglibrary.databinding.FragmentMemoAddBinding
 import com.example.kanglibrary.model.Book
 import com.example.kanglibrary.viewmodel.BookListViewModel
-import com.example.kanglibrary.viewmodel.MemoDialogViewModel
 
 /**
  * @file MemoFragment.kt
@@ -46,27 +38,21 @@ class MemoAddDialog : DialogFragment() {
             if(input.length > 0) {
                 viewModel.addMemo(book, input)
                 Toast.makeText(context, "Memo has been added", Toast.LENGTH_SHORT).show()
-                dismiss()
+                onClose()
             } else {
                 Toast.makeText(context, "Please write something..", Toast.LENGTH_SHORT).show()
             }
         })
 
         binding.btnCancelMemo.setOnClickListener(View.OnClickListener {
-            dismiss()
+            onClose()
         })
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(requireActivity()).get(BookListViewModel::class.java)
-        viewModel.liveBookData.observe(this, Observer {
-            val index = book.index as Int
-            if(index < it.size) {
-                Log.d(javaClass.name, "onActivityCreated >>> ${it[book.index!!].title}")
-            }
-        })
+        viewModel = ViewModelProvider(requireActivity()).get(BookListViewModel::class.java)
     }
     override fun onResume() {
         super.onResume()
@@ -81,5 +67,8 @@ class MemoAddDialog : DialogFragment() {
         val deviceWidth = size.x
         params?.width = (deviceWidth * 0.9).toInt()
         dialog?.window?.attributes = params as WindowManager.LayoutParams
+    }
+    private fun onClose() {
+        dismiss()
     }
 }
