@@ -8,18 +8,14 @@ import com.google.gson.JsonParser
 import org.json.JSONObject
 import java.io.*
 
-
 object MemoManager {
-    const val FILE_NAME = "memo_data.txt"
-
-
+    private const val FILE_NAME = "memo_data.txt"
 
     private fun updateFile(json : String, context : Context) {
         // Write data into a file
         Log.d(javaClass.name, "updateFile > ${json.toString()}")
         val file = File(context.filesDir, FILE_NAME)
         file.writeText(json)
-
     }
 
     fun writeMemo(isbn13: String, memo: String, context: Context) {
@@ -29,8 +25,6 @@ object MemoManager {
         var json = JSONObject(map as Map<String, String>).toString();
 
         updateFile(json, context)
-//        val file = File(context.filesDir, FILE_NAME)
-//        file.writeText(json)
     }
 
     fun deleteMemo(isbn13: String, context: Context) {
@@ -56,6 +50,5 @@ object MemoManager {
             return Gson().fromJson<HashMap<String, String>>(jsonObject.toString(), HashMap::class.java)
         }
     }
-
 
 }

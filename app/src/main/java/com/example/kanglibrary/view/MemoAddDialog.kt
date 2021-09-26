@@ -14,7 +14,7 @@ import com.example.kanglibrary.model.Book
 import com.example.kanglibrary.viewmodel.BookListViewModel
 
 /**
- * @file MemoFragment.kt
+ * @file MemoAddDialog.kt
  * @date 23/09/2021
  * @brief A Dialog Fragment to add memo for selected book
  * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
@@ -24,7 +24,6 @@ class MemoAddDialog : DialogFragment() {
     private lateinit var book : Book
     private lateinit var viewModel : BookListViewModel
 
-    //
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMemoAddBinding.inflate(inflater, container, false)
 
@@ -43,19 +42,16 @@ class MemoAddDialog : DialogFragment() {
                 Toast.makeText(context, "Please write something..", Toast.LENGTH_SHORT).show()
             }
         })
-
         binding.btnCancelMemo.setOnClickListener(View.OnClickListener {
             onClose()
         })
+
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(BookListViewModel::class.java)
-    }
-    override fun onResume() {
-        super.onResume()
 
         // Set dialog size
         val windowManager = activity?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -68,6 +64,7 @@ class MemoAddDialog : DialogFragment() {
         params?.width = (deviceWidth * 0.9).toInt()
         dialog?.window?.attributes = params as WindowManager.LayoutParams
     }
+
     private fun onClose() {
         dismiss()
     }

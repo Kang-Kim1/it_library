@@ -11,15 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.kanglibrary.R
 import com.example.kanglibrary.databinding.ActivitySplashBinding
-import com.example.kanglibrary.model.Book
 
 class SplashActivity : AppCompatActivity() {
-    lateinit var results : List<Book>
-    lateinit var binding : ActivitySplashBinding
-    lateinit var progressBar : ProgressBar
-    lateinit var loadingTV : TextView
-    var isLoading = true
+    private lateinit var binding : ActivitySplashBinding
+    private lateinit var progressBar : ProgressBar
+    private lateinit var loadingTV : TextView
 
+    private val loadingText : String = "Getting books now..."
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,47 +30,31 @@ class SplashActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         Log.d("APP STARTED", "JUST PASSED")
     }
-    
 
     override fun onStart() {
         super.onStart()
-        progressBar.visibility = View.INVISIBLE
-
-        Handler().postDelayed({
-
-        }, 1000000)
-
-        val intent = Intent(this, BookListActivity::class.java)
-        startActivity(intent)
+        showLoadingAnimation()
     }
-
 
     private fun showLoadingAnimation() {
-        val loadingText : String = "Getting books now ..."
-        val currTextBuilder = StringBuilder()
+        val textBuilder  = StringBuilder()
         Log.d("showLoadingAnimation()", "outside")
-        for(i in 0 until loadingText.length) {
+
+        recurAppendText(0, loadingText.length, textBuilder)
+
+    }
+    private fun recurAppendText(ptr : Int, size : Int, txt : StringBuilder) {
+
+        if(ptr < size) {
+            txt.append(loadingText[ptr])
+            loadingTV.text = txt.toString()
             Handler().postDelayed({
-                currTextBuilder.append(loadingText[i])
-                loadingTV.text = currTextBuilder
-            }, 10000)
-            print("plz")
+                recurAppendText(ptr + 1, size, txt)
+            }, 150)
+        } else {
+            progressBar.visibility = View.INVISIBLE
+            val intent = Intent(this, BookListActivity::class.java)
+            startActivity(intent)
         }
-        isLoading = false
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-
-    /**
-     * Returns mac address for a given index
-     * @param : -
-     * @return: Appliance's Mac address
-     * @throws ArrayIndexOutOfBoundsException
-     */
-    private fun loadBookInfo(): Boolean {
-        return true
     }
 }

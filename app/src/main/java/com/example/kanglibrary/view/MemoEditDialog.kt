@@ -5,21 +5,18 @@ import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.kanglibrary.databinding.FragmentMemoEditBinding
 import com.example.kanglibrary.model.Book
 import com.example.kanglibrary.viewmodel.BookListViewModel
 
 /**
- * @file MemoFragment.kt
+ * @file MemoEditDialog.kt
  * @date 23/09/2021
- * @brief A Dialog Fragment to add memo for selected book
+ * @brief A Dialog Fragment to edit and delete memo for selected book has existing memo
  * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
  */
 class MemoEditDialog : DialogFragment() {
@@ -52,7 +49,6 @@ class MemoEditDialog : DialogFragment() {
             Toast.makeText(context, "Memo has been deleted", Toast.LENGTH_SHORT).show()
             onClose()
         })
-
         binding.btnCancelMemo.setOnClickListener(View.OnClickListener {
             onClose()
         })
@@ -63,10 +59,6 @@ class MemoEditDialog : DialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(BookListViewModel::class.java)
-    }
-
-    override fun onResume() {
-        super.onResume()
 
         // Set dialog size
         val windowManager = activity?.getSystemService(Context.WINDOW_SERVICE) as WindowManager

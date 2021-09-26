@@ -31,25 +31,23 @@ class BookListActivity : AppCompatActivity() {
     private lateinit var searchET : TextView
     private lateinit var viewModel : BookListViewModel
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         Log.d(this.javaClass.name, "OnCreate")
+        super.onCreate(savedInstanceState)
 
-//        viewModel = ViewModelProviders.of(this).get(BookListViewModel::class.java)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
-        viewModel = ViewModelProvider(this).get(BookListViewModel::class.java)
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_book_list)
-
         binding.lifecycleOwner = this
         progressBar = binding.pgListLoading
         progressBar.bringToFront()
+        binding.rvBookList.layoutManager = LinearLayoutManager(this)
+        binding.btnSearch.setOnClickListener(View.OnClickListener {
+            progressBar.visibility = View.VISIBLE
+            searchBooks()
+        })
 
         searchET = binding.etSearchKeyword
-
         searchET.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
                 searchBooks()
@@ -58,17 +56,10 @@ class BookListActivity : AppCompatActivity() {
             false
         })
 
-        binding.rvBookList.layoutManager = LinearLayoutManager(this)
-
-        binding.btnSearch.setOnClickListener(View.OnClickListener {
-            progressBar.visibility = View.VISIBLE
-            searchBooks()
-        })
-
+        viewModel = ViewModelProvider(this).get(BookListViewModel::class.java)
         // Observer for Books
         viewModel.liveBookData.observe(this, Observer {
             Log.d(javaClass.name, "Book data update observed ")
-
             if (binding.rvBookList.adapter != null) {
                 binding.rvBookList.adapter?.notifyDataSetChanged()
             } else {
@@ -77,20 +68,19 @@ class BookListActivity : AppCompatActivity() {
             }
             progressBar.visibility = View.GONE
         })
-
         // Observer for Error message
         viewModel.liveErrorTxt.observe(this, Observer {
             Log.d(javaClass.name, "Error msg observed ")
             Toast.makeText(this, viewModel.liveErrorTxt.value, Toast.LENGTH_SHORT).show()
             progressBar.visibility = View.GONE
         })
-
         // Observer for Error message
         viewModel.liveBooksCount.observe(this, Observer {
             Log.d(javaClass.name, "Count change observed : ${it}")
             binding.totalCount = it
         })
     }
+
     private fun searchBooks() {
         viewModel.search(searchET.text.toString())
     }
@@ -98,18 +88,13 @@ class BookListActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Log.d(javaClass.name, "onResume() >>> ")
-//        searchBooks()
     }
 
     override fun onBackPressed() {
-        /* Disable 'Back' Button */
+        /* Disable 'Back' Button for Activity only */
         val count = supportFragmentManager.backStackEntryCount
-
-        if (count == 0) {
-            //additional code
-        } else {
+        if (count != 0) {
             supportFragmentManager.popBackStack()
         }
-
     }
 }
