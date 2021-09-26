@@ -74,31 +74,23 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
                     response: Response<BookSearchResult>
             ) {
                 if(!callAllList.isCanceled) {
-                    //Log.d(this.javaClass.name, "getAllBooks > onResponse >  ${response}")
-                    //Log.d(this.javaClass.name, "getAllBooks > onResponse >  ${response.body()}")
-
                     val totalCount = response.body()?.total!!.toInt()
                     liveBooksCount.postValue(totalCount)
 
                     val books = response.body()?.books as ArrayList<Book>
-
                     if(totalCount == 0) {
                         Log.d("NO BOOKS FOUND", "NO BOOKS FOUND")
                         liveErrorTxt.postValue("No result found")
                         liveBookData.postValue(books)
                         return
                     }
-                    // 111 resultList.addAll(books)
-                    //liveBookData.value?.addAll(books)
                     bookList.addAll((page - 1) * 10, books)
                     liveBookData.setValue(bookList)
 
                     Log.d(this.javaClass.name, "getAllBooks > onResponse > List Count :  ${books.size} / ${page}")
-
                     for(i in 0 until books.size) {
                         getBookDetail(books[i].isbn13!!, (page - 1) * 10 + i)
                     }
-
                     if(totalCount / 10 > page) {
                         getAllBooks(query, page + 1)
                     }
@@ -113,6 +105,7 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
             }
         })
     }
+
     private fun updateLiveMemoData(book : Book, memo : String) {
         memoData = MemoManager.readMemo(context)
         liveMemoData.postValue(memoData)
@@ -126,7 +119,6 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
         Log.d(javaClass.name, "addMemo > ${memo} for ${book.isbn13}")
         MemoManager.writeMemo(book?.isbn13.toString(), memo, context)
         updateLiveMemoData(book, memo)
-
     }
 
     fun deleteMemo(book : Book) {
@@ -142,20 +134,15 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
     }
 
     fun getBookDetail(isbn : String, index : Int){
-//        val retrofit = RetrofitClient.getInstance()
-//        val api = retrofit.create(RetrofitService::class.java)
-//        val call = api.getBookDetail(isbn)
         callBookDetail = api.getBookDetail(isbn)
 
         Log.d(this.javaClass.name,"getBookDetail")
-//        call.enqueue(object : Callback<Book> {
         callBookDetail.enqueue(object : Callback<Book>{
             override fun onResponse(
                     call: Call<Book>,
                     response: Response<Book>
             ) {
                 if(!callBookDetail.isCanceled) {
-                    //Log.d(this.javaClass.name, "getBookDetail > onResponse >  ${response.body()}")
                     val bookDetail = response.body() as Book
                     bookDetail.index = index
 
@@ -173,12 +160,8 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
                     } else {
                         bookDetail.memo = ""
                     }
-
-                    // 111 resultList[index] = bookDetail
-                    //liveBookData.value!![index] = bookDetail
                     bookList[index] = bookDetail
                     liveBookData.postValue(bookList)
-//                    liveBookData.value = bookList
                 }
             }
 

@@ -150,7 +150,11 @@
                         android:scrollbars="vertical"
                         android:text="@{book.desc}"
                         android:textSize="15sp" />
-
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="10dp"
+                        android:background="#1B000000" />
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/llo_publisher"
                         android:layout_width="match_parent"
@@ -158,21 +162,19 @@
                         android:layout_marginHorizontal="30dp"
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:weightSum="3">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center"
                             android:text="Publisher"
                             android:textSize="14sp" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
+                            android:layout_weight="2"
                             android:text="@{book.publisher}"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -186,21 +188,19 @@
                         android:layout_marginHorizontal="30dp"
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:weightSum="3">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center"
                             android:text="Language"
                             android:textSize="14sp" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
+                            android:layout_weight="2"
                             android:text="@{book.language}"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -214,21 +214,19 @@
                         android:layout_marginHorizontal="30dp"
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:weightSum="3">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center"
                             android:text="Page"
                             android:textSize="14sp" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
+                            android:layout_weight="2"
                             android:text="@{book.language}"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -242,21 +240,19 @@
                         android:layout_marginHorizontal="30dp"
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:weightSum="3">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center"
                             android:text="ISBN-10"
                             android:textSize="14sp" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
+                            android:layout_weight="2"
                             android:text="@{book.isbn10}"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -270,36 +266,24 @@
                         android:layout_marginHorizontal="30dp"
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:weightSum="3">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center"
                             android:text="ISBN-13"
                             android:textSize="14sp" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
+                            android:layout_weight="2"
                             android:text="@{book.isbn13}"
                             android:textSize="14sp"
                             android:textStyle="bold" />
+
                     </androidx.appcompat.widget.LinearLayoutCompat>
-
-                    <!--                <androidx.appcompat.widget.LinearLayoutCompat-->
-                    <!--                    android:id="@+id/llo_desc"-->
-                    <!--                    android:layout_width="match_parent"-->
-                    <!--                    android:layout_height="wrap_content"-->
-                    <!--                    android:layout_marginHorizontal="30dp"-->
-                    <!--                    android:layout_marginTop="10dp"-->
-                    <!--                    android:layout_weight="1"-->
-                    <!--                    android:orientation="horizontal"-->
-                    <!--                    android:weightSum="2">-->
-
 
                 </LinearLayout>
 

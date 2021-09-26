@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.example.kanglibrary.R
 import com.example.kanglibrary.databinding.FragmentDetailsBinding
 import com.example.kanglibrary.model.Book
@@ -26,24 +25,23 @@ class BookDetailFragment : Fragment() {
     private lateinit var binding : FragmentDetailsBinding
     private lateinit var viewModel : BookListViewModel
     private lateinit var bookDetail : Book
-    private var hasMemo : Boolean = false
     private lateinit var isbn13 : String
 
+    private var hasMemo : Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_details, container, false)
-        viewModel = ViewModelProvider(requireActivity()).get(BookListViewModel::class.java)
-
         bookDetail = arguments?.getSerializable("SELECTED_BOOK") as Book as Book
 
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_details, container, false)
         binding.ivThumbnailDetail.setOnClickListener(View.OnClickListener {
             val url = it.tag as String
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(browserIntent)
         })
-
         binding.book = bookDetail
         isbn13 = bookDetail.isbn13.toString()
+
+        viewModel = ViewModelProvider(requireActivity()).get(BookListViewModel::class.java)
 
         (activity as AppCompatActivity).setSupportActionBar(binding.tbBookDetail)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -63,7 +61,6 @@ class BookDetailFragment : Fragment() {
             if(it.containsKey(bookDetail.isbn13)) {
                 Log.d(javaClass.name, "onResume > ${bookDetail.isbn13} has been updated")
                 bookDetail.memo = it[isbn13]
-
             } else {
                 bookDetail.memo = ""
             }
@@ -71,27 +68,20 @@ class BookDetailFragment : Fragment() {
         })
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater : MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         (activity as AppCompatActivity).menuInflater.inflate(R.menu.menu_toolbar, menu)
-
         Log.d(javaClass.name, "onCreateOptionMenu >>>")
-
         hasMemo = false
         if(bookDetail?.memo != "") {
             Log.d("MEMO DETECTED ", "${bookDetail.title} has memo : ${bookDetail?.memo.toString()}")
             hasMemo = true
         }
-
         if(hasMemo) {
-//            menu?.getItem(0)?.setIcon(R.drawable.outline_sticky_note_2_black_24dp)
             menu?.getItem(0)?.setIcon(R.drawable.outline_sticky_note_2_black_24dp)
         } else {
-//            menu?.getItem(0)?.setIcon(R.drawable.outline_note_add_black_24dp)
             menu?.getItem(0)?.setIcon(R.drawable.outline_note_add_black_24dp)
         }
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -117,7 +107,6 @@ class BookDetailFragment : Fragment() {
             }
             else -> return super.onOptionsItemSelected(item)
         }
-
     }
 
     private fun updateHasMemo() {
