@@ -22,7 +22,7 @@ class LinedEditText : AppCompatEditText {
         mRect = Rect()
         mPaint = Paint()
         mPaint.style = Paint.Style.FILL
-        mPaint.color = Color.RED
+        mPaint.color = Color.parseColor("#38a3d1")
         this.setBackgroundColor(Color.WHITE)
     }
 

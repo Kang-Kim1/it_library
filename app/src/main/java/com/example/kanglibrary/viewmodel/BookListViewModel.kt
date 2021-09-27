@@ -43,7 +43,7 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
     }
 
     private fun initViewModel() {
-        Log.d(javaClass.name, "init begin")
+        Log.d(javaClass.name, "init - ViewModel")
         liveBookData =  MutableLiveData<ArrayList<Book>>()
         liveErrorTxt = MutableLiveData<String>()
         liveBooksCount = MutableLiveData<Int>()
@@ -60,7 +60,7 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
         memoData = MemoManager.readMemo(context)
         callAllList.cancel()
         callBookDetail.cancel()
-        while(!(callAllList.isCanceled && callBookDetail.isCanceled)) {Log.d("WAITING", "WAITING")}
+        while(!(callAllList.isCanceled && callBookDetail.isCanceled)) {Log.d(javaClass.name, "Search() > Waiting to be canceled,,")}
         liveBookData.value?.clear()
         getAllBooks(query, 1)
     }
