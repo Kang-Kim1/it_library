@@ -38,11 +38,11 @@ class BookAdapter(var bookList : LiveData<ArrayList<Book>>) : RecyclerView.Adapt
     }
 
     override fun getItemCount(): Int {
-        return bookList.value!!.size
+        return bookList.value?.size as Int
     }
 
     override fun onBindViewHolder(holder: BookAdapter.ViewHolder, position: Int) {
-        val book = bookList.value!![position]
+        val book : Book = bookList.value?.get(position) as Book
 
         //Log.d(javaClass.name, "onBindViewHolder > ADDED book's ISBN : ${book.isbn13}")
         holder.bind(book)

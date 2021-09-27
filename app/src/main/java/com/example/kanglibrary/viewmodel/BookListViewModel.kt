@@ -43,7 +43,7 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
     }
 
     private fun initViewModel() {
-        Log.d(javaClass.name, "init - ViewModel")
+        Log.d(javaClass.name, "init begin")
         liveBookData =  MutableLiveData<ArrayList<Book>>()
         liveErrorTxt = MutableLiveData<String>()
         liveBooksCount = MutableLiveData<Int>()
@@ -60,7 +60,7 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
         memoData = MemoManager.readMemo(context)
         callAllList.cancel()
         callBookDetail.cancel()
-        while(!(callAllList.isCanceled && callBookDetail.isCanceled)) {Log.d(javaClass.name, "Search() > Waiting to be canceled,,")}
+        while(!(callAllList.isCanceled && callBookDetail.isCanceled)) {Log.d(javaClass.name, "Search() > Waiting ")}
         liveBookData.value?.clear()
         getAllBooks(query, 1)
     }
@@ -74,7 +74,7 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
                     response: Response<BookSearchResult>
             ) {
                 if(!callAllList.isCanceled) {
-                    val totalCount = response.body()?.total!!.toInt()
+                    val totalCount : Int = response.body()?.total?.toInt() as Int
                     liveBooksCount.postValue(totalCount)
 
                     val books = response.body()?.books as ArrayList<Book>
@@ -89,7 +89,7 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
 
                     Log.d(this.javaClass.name, "getAllBooks > onResponse > List Count :  ${books.size} / ${page}")
                     for(i in 0 until books.size) {
-                        getBookDetail(books[i].isbn13!!, (page - 1) * 10 + i)
+                        getBookDetail(books[i].isbn13.toString(), (page - 1) * 10 + i)
                     }
                     if(totalCount / 10 > page) {
                         getAllBooks(query, page + 1)
@@ -101,6 +101,51 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
                 Log.d(this.javaClass.name, "getAllBooks > onFailure > message : ${t.message}")
                 if(t.message != t.message) {
                     liveErrorTxt.postValue("Request Failed - All Book List")
+                }
+            }
+        })
+    }
+
+    fun getBookDetail(isbn : String, index : Int){
+        callBookDetail = api.getBookDetail(isbn)
+
+        Log.d(this.javaClass.name,"getBookDetail")
+        callBookDetail.enqueue(object : Callback<Book>{
+            override fun onResponse(
+                    call: Call<Book>,
+                    response: Response<Book>
+            ) {
+                if(!callBookDetail.isCanceled) {
+                    val bookDetail = response.body() as Book
+                    bookDetail.index = index
+
+                    // String to be displayed for author @ recycler view
+                    val authors = bookDetail.authors?.split(", ")
+                    if (authors?.size as Int > 1) {
+                        bookDetail.authorsForItemLabel = "${authors[0]} and ${authors.size - 1} others"
+                    } else {
+                        bookDetail.authorsForItemLabel = "${bookDetail.authors}"
+                    }
+
+                    // Add memo if exists
+                    if(memoData.containsKey(bookDetail.isbn13)) {
+                        bookDetail.memo = memoData[bookDetail.isbn13]
+                    } else {
+                        bookDetail.memo = ""
+                    }
+
+                    // When new search begins & previous search is not done
+                    if(index > bookList.size) return
+
+                    bookList[index] = bookDetail
+                    liveBookData.postValue(bookList)
+                }
+            }
+
+            override fun onFailure(call: Call<Book>, t: Throwable) {
+                Log.d(this.javaClass.name, "getBookDetail > onFailure > message : ${t.message}")
+                if(t.message != "Canceled") {
+                    liveErrorTxt.postValue("Request Failed - Book Detail for ${isbn}")
                 }
             }
         })
@@ -133,45 +178,5 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
         updateLiveMemoData(book, memo)
     }
 
-    fun getBookDetail(isbn : String, index : Int){
-        callBookDetail = api.getBookDetail(isbn)
-
-        Log.d(this.javaClass.name,"getBookDetail")
-        callBookDetail.enqueue(object : Callback<Book>{
-            override fun onResponse(
-                    call: Call<Book>,
-                    response: Response<Book>
-            ) {
-                if(!callBookDetail.isCanceled) {
-                    val bookDetail = response.body() as Book
-                    bookDetail.index = index
-
-                    // String to be displayed for author @ recycler view
-                    val authors = bookDetail.authors?.split(", ")
-                    if (authors!!.size > 1) {
-                        bookDetail.authorsForItemLabel = "${authors[0]} and ${authors!!.size - 1} others"
-                    } else {
-                        bookDetail.authorsForItemLabel = "${bookDetail.authors}"
-                    }
-
-                    // Add memo if exists
-                    if(memoData.containsKey(bookDetail.isbn13)) {
-                        bookDetail.memo = memoData[bookDetail.isbn13]
-                    } else {
-                        bookDetail.memo = ""
-                    }
-                    bookList[index] = bookDetail
-                    liveBookData.postValue(bookList)
-                }
-            }
-
-            override fun onFailure(call: Call<Book>, t: Throwable) {
-                Log.d(this.javaClass.name, "getBookDetail > onFailure > message : ${t.message}")
-                if(t.message != "Canceled") {
-                    liveErrorTxt.postValue("Request Failed - Book Detail for ${isbn}")
-                }
-            }
-        })
-    }
 }
 
