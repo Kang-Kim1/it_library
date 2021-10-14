@@ -9,4 +9,4 @@
   * File IO > SQLite
   * RxAndroid for HTTP Request & Response
   * Data related logics to be moved to MODEL(not ViewModel)
-  * Paging - RxAndroid
+  * Paging in List Activity - RxAndroid
