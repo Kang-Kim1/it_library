@@ -1,12 +1,12 @@
 # Kang Library
-### Native Android Application for saerching IT Books
-* Architecture : MVVM
-* API : https://api.itbook.store/
-* External Libraries : Retrofit2, Glide 
+### Native Android Application to search IT Books (API : https://api.itbook.store/)
+* Architecture : MVVM(Data Binding, Observer patter w/ LiveData) 
+  - Splash page with animation
+  - RecyclerView & paging 
+  - CRUD for memo on book - SQLite DB & File IO   
+  - Async. HTTP request & repsponse 
+* External Libraries : Retrofit2, Glide
 * Class Diagram :  
-![image](https://user-images.githubusercontent.com/20007119/136500541-d512e33a-e014-4bce-b152-b674764f52af.png)
-* ToDo : 
-  * File IO > SQLite
-  * RxAndroid for HTTP Request & Response
-  * Data related logics to be moved to MODEL(not ViewModel)
-  * Paging in List Activity - RxAndroid
+    <image src="https://user-images.githubusercontent.com/20007119/156893344-8906ef81-92d6-48a6-9388-151643e10181.png" width="80%" height="80%"/>
+    
+    
