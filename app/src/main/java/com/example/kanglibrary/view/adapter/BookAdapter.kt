@@ -15,8 +15,6 @@ import com.example.kanglibrary.databinding.ItemBookBinding
 import com.example.kanglibrary.model.Book
 import com.example.kanglibrary.view.BookDetailFragment
 import com.example.kanglibrary.view.BookListActivity
-import com.example.kanglibrary.view.MemoAddDialog
-import com.example.kanglibrary.view.MemoEditDialog
 
 /**
  * @file BookAdapter.kt

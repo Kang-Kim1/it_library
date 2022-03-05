@@ -1,6 +1,8 @@
 package com.example.kanglibrary.viewmodel
 
+import com.example.kanglibrary.util.sqliteoperators.DBHelper
 import android.app.Application
+import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -20,16 +22,26 @@ import retrofit2.Response
  * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
  */
 class BookListViewModel(application : Application) : AndroidViewModel(application) {
+    val dbMode : Boolean = true
+
     lateinit var liveBookData : MutableLiveData<ArrayList<Book>>
     lateinit var liveBooksCount : MutableLiveData<Int>
     lateinit var liveErrorTxt : MutableLiveData<String>
     lateinit var liveMemoData : MutableLiveData<Map<String,String>>
 
+    // Default search value
+    private var keyword = "android"
+    private var page = 1
+    private var itemsPerPage = 10
+    private var totalCount = 0
+
     private lateinit var bookList : ArrayList<Book>
+    private lateinit var dbHelper: DBHelper
 
     private val retrofit = RetrofitClient.getInstance()
     private val api = retrofit.create(RetrofitService::class.java)
-    private var memoData : HashMap<String, String> = MemoManager.readMemo(getApplication<Application>().applicationContext)
+
+    private lateinit var memoData : HashMap<String, String>
 
     private lateinit var callAllList : Call<BookSearchResult>
     private lateinit var callBookDetail : Call<Book>
@@ -50,22 +62,46 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
         liveMemoData = MutableLiveData<Map<String,String>>()
 
         liveBooksCount.postValue(0)
-        liveMemoData.postValue(memoData)
 
         bookList = ArrayList<Book>()
-        getAllBooks("android", 1)
+        getAllBooks(keyword, page)
+
+        if(dbMode) {
+            dbHelper = DBHelper(this.context, "ITLibrary", null, 1)
+            dbHelper.onCreate(dbHelper.writableDatabase)
+            dbHelper.updateMemosTable(dbHelper.writableDatabase, "isbn1111", "TEST_DATA")
+            memoData = dbHelper.loadMemos()
+        } else {
+            memoData = MemoManager.readMemo(getApplication<Application>().applicationContext)
+        }
+        liveMemoData.postValue(memoData)
     }
 
-    fun search(query : String) {
-        memoData = MemoManager.readMemo(context)
-        callAllList.cancel()
-        callBookDetail.cancel()
+    fun search(query : String, newSearch : Boolean) {
+        Log.d("SEARCH KEYWORKD", "${keyword} / ${page}")
+        this.keyword = if (query == "") keyword else query
+//        if(dbMode) {
+//            this.memoData = dbHelper.loadMemos()
+//        } else {
+//            this.memoData = MemoManager.readMemo(context)
+//        }
+
+        this.callAllList.cancel()
+        this.callBookDetail.cancel()
         while(!(callAllList.isCanceled && callBookDetail.isCanceled)) {Log.d(javaClass.name, "Search() > Waiting ")}
-        liveBookData.value?.clear()
-        getAllBooks(query, 1)
+        if(newSearch) {
+            liveBookData.value?.clear()
+            page = 0
+        } else {
+            if(page * itemsPerPage > totalCount) {
+                liveErrorTxt.postValue("End of the list")
+                return
+            }
+        }
+        getAllBooks(keyword, ++page)
     }
 
-    fun getAllBooks(query : String, page : Int) {
+    private fun getAllBooks(query : String, page : Int) {
         callAllList = api.getAllBooks(query, page)
         Log.d(this.javaClass.name,"getAllBooks")
         callAllList.enqueue(object : Callback<BookSearchResult> {
@@ -74,7 +110,7 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
                     response: Response<BookSearchResult>
             ) {
                 if(!callAllList.isCanceled) {
-                    val totalCount : Int = response.body()?.total?.toInt() as Int
+                    totalCount = response.body()?.total?.toInt() as Int
                     liveBooksCount.postValue(totalCount)
 
                     val books = response.body()?.books as ArrayList<Book>
@@ -84,15 +120,12 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
                         liveBookData.postValue(books)
                         return
                     }
-                    bookList.addAll((page - 1) * 10, books)
-                    liveBookData.setValue(bookList)
+                    bookList.addAll((page - 1) * itemsPerPage, books)
+                    liveBookData.value = bookList
 
                     Log.d(this.javaClass.name, "getAllBooks > onResponse > List Count :  ${books.size} / ${page}")
                     for(i in 0 until books.size) {
                         getBookDetail(books[i].isbn13.toString(), (page - 1) * 10 + i)
-                    }
-                    if(totalCount / 10 > page) {
-                        getAllBooks(query, page + 1)
                     }
                 }
             }
@@ -152,27 +185,44 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
     }
 
     private fun updateLiveMemoData(book : Book, memo : String) {
-        memoData = MemoManager.readMemo(context)
+        if(dbMode) {
+            memoData = dbHelper.loadMemos()
+        } else {
+            memoData = MemoManager.readMemo(context)
+        }
         liveMemoData.postValue(memoData)
 
         val index = book?.index as Int
         bookList[index].memo = memo
-        liveBookData.setValue(bookList)
+        liveBookData.value = bookList
     }
 
-    fun addMemo(book : Book, memo : String) {
+    fun addMemoFileIO(book : Book, memo : String) {
         Log.d(javaClass.name, "addMemo > ${memo} for ${book.isbn13}")
         MemoManager.writeMemo(book?.isbn13.toString(), memo, context)
         updateLiveMemoData(book, memo)
     }
 
-    fun deleteMemo(book : Book) {
+    fun addMemo(book : Book, memo : String) {
+        Log.d(javaClass.name, "addMemo > ${memo} for ${book.isbn13}")
+//        MemoManager.writeMemo(book?.isbn13.toString(), memo, context)
+        dbHelper.updateMemosTable(dbHelper.writableDatabase, book?.isbn13.toString(), memo)
+        updateLiveMemoData(book, memo)
+    }
+
+    fun deleteMemoFileIO(book : Book) {
         Log.d(javaClass.name, "delete > ${book.isbn13}")
         MemoManager.deleteMemo(book?.isbn13.toString(), context)
         updateLiveMemoData(book, "")
     }
 
-    fun editMemo(book : Book, memo : String) {
+    fun deleteMemo(book : Book) {
+        Log.d(javaClass.name, "delete > ${book.isbn13}")
+        dbHelper.deleteMemo(dbHelper.writableDatabase, book?.isbn13.toString())
+        updateLiveMemoData(book, "")
+    }
+
+    fun editMemoFileIO(book : Book, memo : String) {
         Log.d(javaClass.name, "editMemo > ${memo} for ${book.isbn13}")
         MemoManager.writeMemo(book?.isbn13.toString(), memo, context)
         updateLiveMemoData(book, memo)

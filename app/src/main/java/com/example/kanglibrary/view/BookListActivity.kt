@@ -9,14 +9,22 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.kanglibrary.R
 import com.example.kanglibrary.databinding.ActivityBookListBinding
 import com.example.kanglibrary.view.adapter.BookAdapter
 import com.example.kanglibrary.viewmodel.BookListViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -30,6 +38,7 @@ class BookListActivity : AppCompatActivity() {
     private lateinit var progressBar : ProgressBar
     private lateinit var searchET : TextView
     private lateinit var viewModel : BookListViewModel
+    private var searchKeyword ="";
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(this.javaClass.name, "OnCreate")
@@ -43,14 +52,31 @@ class BookListActivity : AppCompatActivity() {
         progressBar.bringToFront()
         binding.rvBookList.layoutManager = LinearLayoutManager(this)
         binding.btnSearch.setOnClickListener(View.OnClickListener {
-            progressBar.visibility = View.VISIBLE
-            searchBooks()
+//            progressBar.visibility = View.VISIBLE
+            turnOnLoading(true)
+            searchKeyword = searchET.text.toString();
+            searchBooks(true)
+        })
+
+        binding.rvBookList.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                // If reaches the end
+                if(binding.rvBookList.size != viewModel.liveBooksCount.value) {
+                    if (!recyclerView.canScrollVertically(1)) {
+                        turnOnLoading(true)
+                        searchBooks(false)
+                    }
+                }
+            }
         })
 
         searchET = binding.etSearchKeyword
         searchET.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                searchBooks()
+                turnOnLoading(true)
+                searchKeyword = searchET.text.toString();
+                searchBooks(true)
                 return@OnKeyListener true
             }
             false
@@ -63,16 +89,15 @@ class BookListActivity : AppCompatActivity() {
             if (binding.rvBookList.adapter != null) {
                 binding.rvBookList.adapter?.notifyDataSetChanged()
             } else {
-                //binding.rvBookList.adapter = BookAdapter(bookList)
                 binding.rvBookList.adapter = BookAdapter(viewModel.liveBookData)
             }
-            progressBar.visibility = View.GONE
+            turnOnLoading(false)
         })
         // Observer for Error message
         viewModel.liveErrorTxt.observe(this, Observer {
             Log.d(javaClass.name, "Error msg observed ")
             Toast.makeText(this, viewModel.liveErrorTxt.value, Toast.LENGTH_SHORT).show()
-            progressBar.visibility = View.GONE
+            turnOnLoading(false)
         })
         // Observer for Error message
         viewModel.liveBooksCount.observe(this, Observer {
@@ -81,8 +106,19 @@ class BookListActivity : AppCompatActivity() {
         })
     }
 
-    private fun searchBooks() {
-        viewModel.search(searchET.text.toString())
+    private fun searchBooks(newSearch : Boolean) {
+        viewModel.search(searchKeyword, newSearch)
+    }
+
+    private fun turnOnLoading(on : Boolean) {
+        if(on) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        } else {
+            window.clearFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        }
+        progressBar.visibility = if(on) View.VISIBLE else View.GONE
     }
 
     override fun onResume() {

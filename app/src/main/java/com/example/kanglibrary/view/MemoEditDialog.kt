@@ -35,7 +35,11 @@ class MemoEditDialog : DialogFragment() {
         binding.btnEditMemo.setOnClickListener(View.OnClickListener {
             val input = binding.etMemo.text.toString()
             if(input.length > 0) {
-                viewModel.editMemo(book, input)
+                if(viewModel.dbMode) {
+                    viewModel.addMemo(book, input)
+                } else {
+                    viewModel.editMemoFileIO(book, input)
+                }
                 book.memo = input
                 Toast.makeText(context, "Memo has been added", Toast.LENGTH_SHORT).show()
                 onClose()
@@ -45,7 +49,11 @@ class MemoEditDialog : DialogFragment() {
         })
 
         binding.btnDeleteMemo.setOnClickListener(View.OnClickListener {
-            viewModel.deleteMemo(book)
+            if(viewModel.dbMode) {
+                viewModel.deleteMemo(book)
+            } else {
+                viewModel.deleteMemoFileIO(book)
+            }
             Toast.makeText(context, "Memo has been deleted", Toast.LENGTH_SHORT).show()
             onClose()
         })

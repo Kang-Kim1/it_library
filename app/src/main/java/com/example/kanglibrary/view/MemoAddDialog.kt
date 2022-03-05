@@ -35,7 +35,11 @@ class MemoAddDialog : DialogFragment() {
         binding.btnAddMemo.setOnClickListener(View.OnClickListener {
             val input = binding.etMemo.text.toString()
             if(input.length > 0) {
-                viewModel.addMemo(book, input)
+                if(viewModel.dbMode) {
+                    viewModel.addMemo(book, input)
+                } else {
+                    viewModel.addMemoFileIO(book, input)
+                }
                 Toast.makeText(context, "Memo has been added", Toast.LENGTH_SHORT).show()
                 onClose()
             } else {
