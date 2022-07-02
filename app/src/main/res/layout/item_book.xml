@@ -80,7 +80,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:text="@{book.memo.length() > 0 ? `HAS MEMO` : `No Memo`}"
+                        android:text="@{book.memo.length() == 0 ? `HAS MEMO` : `No Memo`}"
                         android:textColor="@{book.memo.length() > 0 ? @color/orange : @android:color/tab_indicator_text}"
                         />
 

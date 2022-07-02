@@ -13,12 +13,6 @@ import com.example.kanglibrary.databinding.FragmentMemoEditBinding
 import com.example.kanglibrary.model.Book
 import com.example.kanglibrary.viewmodel.BookListViewModel
 
-/**
- * @file MemoEditDialog.kt
- * @date 23/09/2021
- * @brief A Dialog Fragment to edit and delete memo for selected book has existing memo
- * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
- */
 class MemoEditDialog : DialogFragment() {
     private lateinit var binding : FragmentMemoEditBinding
     private lateinit var book : Book

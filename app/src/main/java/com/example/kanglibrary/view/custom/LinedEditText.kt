@@ -8,12 +8,6 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 
-/**
- * @file LinedEditText.kt
- * @date 23/09/2015
- * @brief A customized EditText widget has lines
- * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
- */
 class LinedEditText : AppCompatEditText {
     private var mRect: Rect
     private var mPaint: Paint

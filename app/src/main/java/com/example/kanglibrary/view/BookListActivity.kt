@@ -19,20 +19,8 @@ import com.example.kanglibrary.R
 import com.example.kanglibrary.databinding.ActivityBookListBinding
 import com.example.kanglibrary.view.adapter.BookAdapter
 import com.example.kanglibrary.viewmodel.BookListViewModel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import java.util.concurrent.TimeUnit
 
 
-/**
- * @file BookListActivity.kt
- * @date 16/09/2021
- * @brief Activity to display the list of Books through Recycler View
- * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
- */
 class BookListActivity : AppCompatActivity() {
     private lateinit var binding : ActivityBookListBinding
     private lateinit var progressBar : ProgressBar
@@ -44,6 +32,7 @@ class BookListActivity : AppCompatActivity() {
         Log.d(this.javaClass.name, "OnCreate")
         super.onCreate(savedInstanceState)
 
+        var list = ArrayList<IntArray>()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_book_list)
@@ -81,8 +70,8 @@ class BookListActivity : AppCompatActivity() {
             }
             false
         })
-
         viewModel = ViewModelProvider(this).get(BookListViewModel::class.java)
+        
         // Observer for Books
         viewModel.liveBookData.observe(this, Observer {
             Log.d(javaClass.name, "Book data update observed ")

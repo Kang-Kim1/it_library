@@ -2,7 +2,6 @@ package com.example.kanglibrary.viewmodel
 
 import com.example.kanglibrary.util.sqliteoperators.DBHelper
 import android.app.Application
-import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -14,13 +13,9 @@ import com.example.kanglibrary.util.MemoManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
-/**
- * @file Appliance.kt
- * @date 14/09/2021
- * @brief A ViewModel class for BookListActivity
- * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
- */
 class BookListViewModel(application : Application) : AndroidViewModel(application) {
     val dbMode : Boolean = true
 
@@ -53,6 +48,7 @@ class BookListViewModel(application : Application) : AndroidViewModel(applicatio
             initViewModel()
         }
     }
+
 
     private fun initViewModel() {
         Log.d(javaClass.name, "init begin")

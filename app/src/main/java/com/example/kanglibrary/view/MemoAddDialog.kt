@@ -13,12 +13,6 @@ import com.example.kanglibrary.databinding.FragmentMemoAddBinding
 import com.example.kanglibrary.model.Book
 import com.example.kanglibrary.viewmodel.BookListViewModel
 
-/**
- * @file MemoAddDialog.kt
- * @date 23/09/2021
- * @brief A Dialog Fragment to add memo for selected book
- * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
- */
 class MemoAddDialog : DialogFragment() {
     private lateinit var binding : FragmentMemoAddBinding
     private lateinit var book : Book

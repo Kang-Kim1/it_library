@@ -15,12 +15,6 @@ import com.example.kanglibrary.databinding.FragmentDetailsBinding
 import com.example.kanglibrary.model.Book
 import com.example.kanglibrary.viewmodel.BookListViewModel
 
-/**
- * @file Appliance.kt
- * @date 21/09/2021
- * @brief Activity class for book detail
- * @copyright GE Appliances, a Haier Company (Confidential). All rights reserved.
- */
 class BookDetailFragment : Fragment() {
     private lateinit var binding : FragmentDetailsBinding
     private lateinit var viewModel : BookListViewModel
